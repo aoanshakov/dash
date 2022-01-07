@@ -1,6 +1,7 @@
 data_for_mongodb
 *.swp
-work_folder/--ini
-work_folder/uwsgi.pid
+--ini
+uwsgi.pid
+uwsgi.sock
 __pycache__
 .venv
