@@ -1,0 +1,38 @@
+#!/bin/bash
+
+do_start()
+{
+    echo "Starting application"
+    cd /usr/local/src/ && /usr/local/src/.venv/bin/uwsgi --daemonize --ini /usr/local/src/uwsgi.ini
+}
+
+do_stop()
+{
+    echo "Stopping application"
+
+    if [ -e /usr/local/src/uwsgi.pid ]
+    then
+        /usr/local/src/.venv/bin/uwsgi --stop /usr/local/src/uwsgi.pid
+    fi
+}
+
+case "$1" in
+    start)
+        do_start
+        ;;
+
+    stop)
+        do_stop
+        ;;
+
+    restart)
+        do_stop
+        do_start
+        ;;
+    *)
+        echo "Inavlid argument"
+        exit 1
+        ;;
+esac
+
+exit 0
