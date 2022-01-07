@@ -4,19 +4,18 @@ if [ ! -d /usr/local/src/.venv/bin ]
 then
     python3 -m venv /usr/local/src/.venv
     /usr/local/src/.venv/bin/pip3 install -v wheel
-    /usr/local/src/.venv/bin/pip3 install jinja2==2.8.1
-    /usr/local/src/.venv/bin/pip3 install -v uwsgi dash
+    /usr/local/src/.venv/bin/pip3 install -v uwsgi dash dash_bootstrap_components
 fi
 
 cp /usr/local/src/nginx.conf /etc/nginx/nginx.conf
-cp /usr/local/src/try-dash /etc/init.d/try-dash
+cp /usr/local/src/sumerians-to-greek /etc/init.d/sumerians-to-greek
 
 if [ ! -d /var/log/uwsgi ]
 then
     mkdir /var/log/uwsgi
 fi
 
-update-rc.d try-dash defaults
+update-rc.d sumerians-to-greek defaults
 
-service try-dash start
+service sumerians-to-greek start
 service nginx start

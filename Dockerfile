@@ -2,6 +2,15 @@ FROM debian:buster
 
 RUN apt-get update -y
 RUN apt-get upgrade -y
+
+RUN apt-get install -y wget gnupg
+RUN wget -qO - https://www.mongodb.org/static/pgp/server-5.0.asc | apt-key add -
+
+RUN echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/5.0 main" \
+    | tee /etc/apt/sources.list.d/mongodb-org-5.0.list
+
+RUN apt-get update -y
+
 RUN apt-get install -y \
     systemd \
     openssl \
@@ -12,7 +21,8 @@ RUN apt-get install -y \
     curl \
     python3 \
     python3-pip \
-    python3-venv
+    python3-venv \
+    mongodb-org
 
 RUN echo "deb http://nginx.org/packages/debian `lsb_release -cs` nginx" \
     | tee /etc/apt/sources.list.d/nginx.list

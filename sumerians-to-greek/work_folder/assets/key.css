@@ -1,0 +1,283 @@
+/* 
+body
+{
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 10pt;
+}
+*/
+h1
+{
+    padding-top: 20pt;
+    color: navy;
+}
+
+h2
+{
+    color: navy;
+}
+
+sub
+{
+    vertical-align: sub;
+    font-size: smaller;
+}
+
+sup
+{
+    vertical-align: super;
+    font-size: smaller;
+}
+
+/*
+p
+{
+    padding-top: 0.5em;
+}
+
+*/ 
+i
+{
+    color:royalblue; 
+}
+
+em
+{
+    color:royalblue; 
+}
+
+strong
+{
+    color:navy;
+} 
+
+/*
+
+.key
+{
+    font-family: 'Consolas', 'Lucida Console', 'Courier New', monospace;    
+    font-size: 1.5em;
+    font-weight: bold;
+    color: black;
+    cursor: pointer;
+    background-color: #f9f9f9;
+    padding: 0.2em;
+    margin: 0.05em;
+    border-color: black;
+    border-style: solid;
+    border-width: 3px;
+    text-align: center;
+    /* border-radius: 0.3em; */
+    height: 1.8em;
+    width: 2.1em;
+}
+.key:hover
+{
+    color: white;
+    background-color: darkgray;
+    /* border-color:black; */
+}
+.key:focus
+{
+    outline: none;
+}
+.softkey
+{
+    font-size: 1.75em;
+    font-weight: bold;
+    color: black;
+    cursor: pointer;
+    background-color: #f9f9f9;
+    padding: 0.2em;
+    margin-left: 0em;
+    margin-right: -3px;
+    margin-bottom: 1em;
+    margin-top: 0.5em;
+    border-color: darkgray;
+    border-style: solid;
+    border-width: 3px;
+    text-align: center;
+    /* border-radius: 0.3em; */
+    height: 2.25em;
+    width: 2.1em;
+}
+.softkey:hover
+{
+    color: white;
+    background-color: darkgray;
+    /* border-color:black; */
+}
+
+.softkey:focus
+{
+    outline: none;
+}
+
+.invisible_key
+{
+    padding: 0.2em;
+    margin: 0.05em;
+    border-style: solid;
+    border-width: 3px;
+    text-align: center;
+    /* border-radius: 0.3em; */
+    height: 1.8em;
+    width: 3.8em;
+    visibility: hidden;
+}
+.invisible_key:focus
+{
+    outline: none;
+}
+.invisible_semikey
+{
+    padding: 0.2em;
+    margin: 0.05em;
+    border-style: solid;
+    border-width: 3px;
+    text-align: center;
+    /* border-radius: 0.3em; */
+    height: 1.8em;
+    width: 3em;
+    visibility: hidden;
+}
+.invisible_semikey:focus
+{
+    outline: none;
+}
+.inputline
+{
+    font-family: 'Consolas', 'Lucida Console', 'Courier New', monospace;
+    font-size: 1.75em;
+    color: black; 
+    vertical-align: center;
+    padding-left: 0.2em;
+    padding-right: 0.2em;
+    padding-bottom: 0.2em;
+    padding-top: 0.2em;
+    text-align: left;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-bottom: 1em;
+    margin-top: 0.5em;
+    width: 40em;
+    height: 2.25em;
+    border-width: 3px;
+    border-style: solid;
+    border-right: none;
+    border-color: darkgray;
+    /* border-radius: 0.8em; */
+}
+.centered
+{
+    display: flex;
+    justify-content: center;
+}
+.fullcentered
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.longkey
+{
+    font-size: 1.5em;
+    font-weight: bold;
+    color: black;
+    cursor: pointer;
+    background-color: #f9f9f9;
+    padding: 0.2em;
+    margin: 0.05em;
+    border-color: black;
+    border-style: solid;
+    border-width: 3px;
+    text-align: center;
+    /* border-radius: 0.3em; */
+    height: 1.8em;
+    width: 17.5em;
+}
+
+.longkey:hover
+{
+    color: white;
+    background-color: darkgray;
+}
+.longkey:focus
+{
+    outline: none;
+}
+.custom-tabs-container {
+    width: 75%;
+}
+.custom-tabs {
+    background-color: #f9f9f9;
+    border-bottom: 1px solid #d6d6d6;
+    border-radius: 0.3em;
+    height: 2em;
+}
+
+.custom-tab {
+    color:#586069;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-top: 3px solid transparent !important;
+    border-left: 0px !important;
+    border-right: 0px !important;
+    border-bottom: 0px !important;
+    background-color: #fafbfc;
+    padding: 12px !important;
+    font-family: "system-ui";
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+.custom-tab--selected {
+    color: black;
+    box-shadow: 1px 1px 0px white;
+    border-left: 1px solid lightgrey !important;
+    border-right: 1px solid lightgrey !important;
+    border-top: 3px solid #e36209 !important;
+}
+
+.tabs_styles {
+    height: 44px;
+}
+.tab_style {
+    border-bottom: '1px solid #d6d6d6';
+    padding: 6px;
+    font-weight: bold;
+}
+
+.tab_selected_style {
+    border-top: 1px solid #d6d6d6;
+    border-bottom: 1px solid #d6d6d6;
+    background-color: #119DFF;
+    color: 'white';
+    padding: 6px;
+}
+
+.our_markdown
+{
+    display: flex;
+    justify-content: center;
+}
+
+
+/*
+Добавленные стили для описания радиокнопок 
+*/
+
+.radio-group .form-check {
+    padding-left: 0;
+  }
+  
+  .radio-group .btn-group > .form-check:not(:last-child) > .btn {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  
+  .radio-group .btn-group > .form-check:not(:first-child) > .btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    margin-left: -1px;
+  }
+
