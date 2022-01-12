@@ -5,3 +5,4 @@ uwsgi.pid
 uwsgi.sock
 __pycache__
 .venv
+sumerians-to-greek/db

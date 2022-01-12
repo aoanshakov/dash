@@ -35,6 +35,9 @@ RUN curl -sL https://deb.nodesource.com/setup_13.x | bash -
 RUN apt-get install -y nodejs
 RUN curl -L https://npmjs.org/install.sh | sh
 
+ADD create-db /usr/local/bin/create-db
+ADD install-dependencies /usr/local/bin/install-dependencies
 ADD run-server /usr/local/bin/run-server
+ADD setup-services /usr/local/bin/setup-services
 
 ENTRYPOINT bash

@@ -2,17 +2,17 @@
 
 do_start()
 {
-    echo "Starting application"
-    cd /usr/local/src/ && /usr/local/src/.venv/bin/uwsgi --ini /usr/local/src/uwsgi.ini
+    echo "Starting mongoDB"
+    mongod --config /etc/mongod.conf --fork
 }
 
 do_stop()
 {
-    echo "Stopping application"
+    echo "Stopping mongoDB"
 
-    if [ -e /usr/local/src/uwsgi.pid ]
+    if [ -e /usr/local/src/mongodb.pid ]
     then
-        /usr/local/src/.venv/bin/uwsgi --stop /usr/local/src/uwsgi.pid
+        kill -INT `/usr/local/src/mongodb.pid`
     fi
 }
 
