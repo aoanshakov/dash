@@ -3,7 +3,7 @@
 do_start()
 {
     echo "Starting mongoDB"
-    mongod --config /etc/mongod.conf --fork
+    mongod --config /etc/mongod.conf --fork --profile=2 --slowms=1 -vv
 }
 
 do_stop()
