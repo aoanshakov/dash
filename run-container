@@ -74,6 +74,18 @@ then
     exit 1
 fi
 
+if [ $isOsX -eq 0 ]
+then
+    currentDirectory=$(readlink -f $currentDirectory)
+    if [ $? -ne 0 ]
+    then
+        echo "Не удалось получить директорию с приложением"
+        exit 1
+    fi
+else
+    currentDirectory=$(getAbsolutePath $currentDirectory)
+fi
+
 imageTag='try-dash'
 
 if [ $buildImage -eq 1 ]

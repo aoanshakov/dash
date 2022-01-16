@@ -7,7 +7,29 @@ PIP=$BIN/pip3
 
 if [ ! -d $BIN ]
 then
+    echo "Устанавливаю python-пакеты"
+
     python3 -m venv $VENV
+
+    if [ $? -ne 0 ]
+    then
+        echo "Не удалось создать виртуальную среду"
+        exit 1
+    fi
+
     $PIP install -v wheel
+
+    if [ $? -ne 0 ]
+    then
+        echo "Не удалось установить python-пакет wheel"
+        exit 1
+    fi
+
     $PIP install -v uwsgi dash dash_bootstrap_components pymongo
+
+    if [ $? -ne 0 ]
+    then
+        echo "Не удалось установить python-пакеты"
+        exit 1
+    fi
 fi

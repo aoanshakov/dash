@@ -1,0 +1,6 @@
+#!/bin/bash
+
+SG=/usr/local/src/sumerians-to-greek
+WD=$SG/work_folder
+
+rm -rvf $SG/db $WD/.venv $WD/__pycache__ $WD/mongodb.pid $WD/uwsgi.pid

@@ -1,11 +1,25 @@
 #!/bin/bash
 
-WD=/usr/local/src
-DB=$WD/sumerians-to-greek/db
+SG=/usr/local/src/sumerians-to-greek
+WD=$SG/work_folder
+DB=$SG/db
 SHOULD_CREATE_DB=0
 
 $WD/install-python-packages
+
+if [ $? -ne 0 ]
+then
+    echo "Не удалось установить пакеты"
+    exit 1
+fi
+
 $WD/setup-services
+
+if [ $? -ne 0 ]
+then
+    echo "Не удалось настроить сервисы"
+    exit 1
+fi
 
 if [ ! -d $DB ]
 then
@@ -13,12 +27,40 @@ then
     SHOULD_CREATE_DB=1
 fi
 
+echo "Запускаю MongoDB"
 service mongod start
 
-if [ SHOULD_CREATE_DB -eq 1 ]
+if [ $? -ne 0 ]
 then
-    $WD/create-db
+    echo "Не удалось запустить MongoDB"
+    exit 1
 fi
 
+if [ $SHOULD_CREATE_DB -eq 1 ]
+then
+    $WD/create-db
+
+    if [ $? -ne 0 ]
+    then
+        echo "Не удалось создать базу данных"
+        exit 1
+    fi
+fi
+
+echo "Запускаю uwsgi"
 service sumerians-to-greek start
+
+if [ $? -ne 0 ]
+then
+    echo "Не удалось запустить uwsgi"
+    exit 1
+fi
+
+echo "Запускаю nginx"
 service nginx start
+
+if [ $? -ne 0 ]
+then
+    echo "Не удалось запустить nginx"
+    exit 1
+fi
