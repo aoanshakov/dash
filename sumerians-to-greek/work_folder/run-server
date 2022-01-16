@@ -1,0 +1,24 @@
+#!/bin/bash
+
+WD=/usr/local/src
+DB=$WD/sumerians-to-greek/db
+SHOULD_CREATE_DB=0
+
+$WD/install-python-packages
+$WD/setup-services
+
+if [ ! -d $DB ]
+then
+    mkdir $DB
+    SHOULD_CREATE_DB=1
+fi
+
+service mongod start
+
+if [ SHOULD_CREATE_DB -eq 1 ]
+then
+    $WD/create-db
+fi
+
+service sumerians-to-greek start
+service nginx start

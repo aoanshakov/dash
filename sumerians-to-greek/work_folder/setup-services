@@ -1,0 +1,28 @@
+#!/bin/bash
+
+WD=/usr/local/src/sumerians-to-greek/work_folder
+
+cp $WD/nginx.conf /etc/nginx/nginx.conf
+cp $WD/mongod.conf /etc/mongod.conf
+
+if [ ! -d /var/log/uwsgi ]
+then
+    mkdir /var/log/uwsgi
+fi
+
+if [ ! -e /var/log/uwsgi/uwsgi.log ]
+then
+    touch /var/log/uwsgi/uwsgi.log
+fi
+
+systemctl --version
+if [ $? -ne 0 ]
+then
+    cp $WD/sumerians-to-greek /etc/init.d/sumerians-to-greek
+    update-rc.d sumerians-to-greek defaults
+
+    cp $WD/mongod /etc/init.d/mongod
+    update-rc.d mongod defaults
+else
+    cp $WD/uwsgi.service /etc/systemd/system/uwsgi.service
+fi

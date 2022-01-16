@@ -1,5 +1,0 @@
-#!/bin/bash
-
-/usr/local/src/.venv/bin/python3 \
-    /usr/local/src/db-creating/script_for_creating_mongo_db.py \
-    /usr/local/src/db-creating/Totum_JSON

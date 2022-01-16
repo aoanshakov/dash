@@ -1,7 +1,0 @@
-#!/bin/bash
-
-setup-services
-
-service mongod start
-service sumerians-to-greek start
-service nginx start

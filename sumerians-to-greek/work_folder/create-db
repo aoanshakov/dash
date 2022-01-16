@@ -1,0 +1,8 @@
+#!/bin/bash
+
+SG=/usr/local/src/sumerians-to-greek
+DC=$SG/create_mongo_db
+
+$SG/work_folder/.venv/bin/python3 \
+    $DC/script_for_creating_mongo_db.py \
+    $DC/Totum_JSON

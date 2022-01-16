@@ -1,8 +1,5 @@
 #!/bin/bash
 
-applicationDirectory=""
-dbCreatingScriptsDirectory=""
-dbDirectory=""
 farg=""
 isOsX=0
 dockerArguments=""
@@ -45,18 +42,6 @@ do
         fi
 
         dockerArguments="$dockerArguments -p $2:80"
-        shift
-    elif [ "$1" = "--application-directory" ]
-    then
-        applicationDirectory=$2
-        shift
-    elif [ "$1" = "--db-creating-scripts-directory" ]
-    then
-        dbCreatingScriptsDirectory=$2
-        shift
-    elif [ "$1" = "--db-directory" ]
-    then
-        dbDirectory=$2
         shift
     fi
 
@@ -121,79 +106,11 @@ then
     fi
 fi
 
-if [ -z "$applicationDirectory" ]
-then
-    if [ -n "$TRY_DASH_APP_DIRECTORY" ]
-    then
-        applicationDirectory=$TRY_DASH_APP_DIRECTORY
-    fi
-fi
-
-if [ -n "$applicationDirectory" ]
-then
-    if [ ! -d $applicationDirectory ]
-    then
-        echo "Директория $applicationDirectory не существует"
-        exit 1
-    fi
-
-    dockerArguments="$dockerArguments -v $applicationDirectory:/usr/local/src"
-fi
-
-if [ -z "$applicationDirectory" ]
-then
-    echo "Путь к приложению не указан"
-    exit 1
-fi
-
-if [ -z "$dbDirectory" ]
-then
-    if [ -n "$TRY_DASH_DB_DIRECTORY" ]
-    then
-        applicationDirectory=$TRY_DASH_DB_DIRECTORY
-    fi
-fi
-
-if [ -n "$dbDirectory" ]
-then
-    if [ ! -d $dbDirectory ]
-    then
-        echo "Директория $dbDirectory не существует"
-        exit 1
-    fi
-
-    dockerArguments="$dockerArguments -v $dbDirectory:/usr/local/src/db"
-fi
-
-if [ -z "$dbCreatingScriptsDirectory" ]
-then
-    if [ -n "$TRY_DASH_DB_CREATING_SCRIPTS_DIRECTORY" ]
-    then
-        dbCreatingScriptsDirectory=$TRY_DASH_DB_CREATING_SCRIPTS_DIRECTORY
-    fi
-fi
-
-if [ -n "$dbCreatingScriptsDirectory" ]
-then
-    if [ ! -d $dbCreatingScriptsDirectory ]
-    then
-        echo "Директория $dbCreatingScriptsDirectory не существует"
-        exit 1
-    fi
-
-    dockerArguments="$dockerArguments -v $dbCreatingScriptsDirectory:/usr/local/src/db-creating"
-fi
-
-if [ -z "$applicationDirectory" ]
-then
-    echo "Путь к приложению не указан"
-    exit 1
-fi
-
-
 docker run -it --rm \
+    -v $currentDirectory:/usr/local/src \
     --mount type=bind,source=$HOME/.ssh/known_hosts,target=/root/.ssh/known_hosts \
     --mount type=bind,source=$HOME/.ssh/id_rsa,target=/root/.ssh/id_rsa \
     $dockerArguments \
+    -w /usr/local/src/sumerians-to-greek/work_folder \
     $imageTag \
     $entrypointArguments

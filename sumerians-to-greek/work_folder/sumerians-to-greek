@@ -1,18 +1,22 @@
 #!/bin/bash
 
+WD=/usr/local/src/sumerians-to-greek/work_folder
+UWSGI=$WD/.venv/bin/uwsgi
+PID=$WD/uwsgi.ini
+
 do_start()
 {
     echo "Starting application"
-    cd /usr/local/src/ && /usr/local/src/.venv/bin/uwsgi --ini /usr/local/src/uwsgi.ini
+    cd $WD && $UWSGI --ini $PID
 }
 
 do_stop()
 {
     echo "Stopping application"
 
-    if [ -e /usr/local/src/uwsgi.pid ]
+    if [ -e $PID ]
     then
-        /usr/local/src/.venv/bin/uwsgi --stop /usr/local/src/uwsgi.pid
+        $UWSGI --stop $PID
     fi
 }
 
@@ -25,10 +29,6 @@ case "$1" in
         do_stop
         ;;
 
-    restart)
-        do_stop
-        do_start
-        ;;
     *)
         echo "Inavlid argument"
         exit 1

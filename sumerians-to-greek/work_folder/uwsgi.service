@@ -1,0 +1,10 @@
+[Unit]
+Description=uWSGI instance to serve sumerians-to-greek
+After=network.target
+
+[Service]
+User=root
+Group=www-data
+WorkingDirectory=/usr/local/src/sumerians-to-greek/work_folder
+Environment="PATH=/usr/local/src/sumerians-to-greek/work_folder/.venv/bin"
+ExecStart=/usr/local/src/sumerians-to-greek/work_folder/.venv/bin/uwsgi --ini /usr/local/src/sumerians-to-greek/work_folder/uwsgi.ini
