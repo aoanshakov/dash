@@ -1,6 +1,6 @@
 FROM debian:buster
 
-COPY install-debian-packages /
-RUN install-debian-packages
+COPY sumerians-to-greek/work_folder/install-debian-packages /
+RUN /install-debian-packages
 
 ENTRYPOINT bash
