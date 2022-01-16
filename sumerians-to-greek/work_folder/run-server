@@ -24,8 +24,11 @@ fi
 if [ ! -d $DB ]
 then
     mkdir $DB
+    chmod 777 $DB
     SHOULD_CREATE_DB=1
 fi
+
+chmod 777 $WD
 
 echo "Запускаю MongoDB"
 service mongod start
@@ -48,7 +51,7 @@ then
 fi
 
 echo "Запускаю uwsgi"
-service sumerians-to-greek start
+service uwsgi start
 
 if [ $? -ne 0 ]
 then

@@ -20,8 +20,8 @@ fi
 systemctl --version
 if [ $? -ne 0 ]
 then
-    cp $WD/sumerians-to-greek /etc/init.d/sumerians-to-greek
-    update-rc.d sumerians-to-greek defaults
+    cp $WD/uwsgi /etc/init.d/uwsgi
+    update-rc.d uwsgi defaults
 
     cp $WD/mongod /etc/init.d/mongod
     update-rc.d mongod defaults

@@ -2,12 +2,12 @@
 
 WD=/usr/local/src/sumerians-to-greek/work_folder
 UWSGI=$WD/.venv/bin/uwsgi
-PID=$WD/uwsgi.ini
+PID=$WD/uwsgi.pid
 
 do_start()
 {
     echo "Starting application"
-    cd $WD && $UWSGI --ini $PID
+    cd $WD && $UWSGI --ini $WD/uwsgi.ini
 }
 
 do_stop()
