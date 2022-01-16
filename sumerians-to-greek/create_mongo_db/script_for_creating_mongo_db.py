@@ -1,4 +1,4 @@
-from pymongo import MongoClient
+from pymongo import MongoClient, TEXT
 import os
 import json as J
 import sys
@@ -31,7 +31,10 @@ def init_sumer_2_greek_db():
     for n in totum_file_names:
         jdoc = J.load(open(n, 'r', encoding='utf-8'))
         t_col.insert_many(jdoc)
-    ind_dict = {
+    #############################################
+    # Создаем обычные индексы                   #
+    #############################################
+    ind_dict={
         'titles': 1,
         'subtitles': 1,
         'scheme': 1,
@@ -41,6 +44,10 @@ def init_sumer_2_greek_db():
     }
     for x in ind_dict:
         t_col.create_index([(x, ind_dict[x])])
+    #############################################
+    # Создаем текстовый индекс                  #
+    #############################################
+    t_col.create_index([("verse.trans.text", TEXT)],default_language='russian')
     MC.close()
 
 
