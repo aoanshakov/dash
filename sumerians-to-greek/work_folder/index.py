@@ -5,12 +5,14 @@ from dash import html
 import dash_bootstrap_components as dbc
 from dash import dash_table as dt
 from dash.dependencies import ClientsideFunction, Input, Output, State
-from dash.exceptions import PreventUpdate
+# from dash.exceptions import PreventUpdate
 from pymongo import MongoClient as MC
 from alienkbd import greek_kbd, metric_kbd
 import json as j
 import bson.json_util as bj
-import re 
+import re
+from datetime import datetime as dtm
+import uploadfile as uf 
 
 
 volMenuKeyAndValues={
@@ -63,8 +65,7 @@ preQueryKeyAndValues={
     '':'',
 }
 
-app = dash.Dash(__name__,external_stylesheets=[dbc.themes.BOOTSTRAP])
-server = app.server
+app = dash.Dash(__name__,external_stylesheets=[dbc.themes.BOOTSTRAP,dbc.icons.BOOTSTRAP])
 
 app.title="Древнейшие стихоложения мира"
 app.config.suppress_callback_exceptions=True
@@ -131,11 +132,10 @@ def Search_wizard():
                                     html.Div(
                                         id='volContainer',
                                         children=[
-                                            # html.H6('Коллекция:'),
                                             dbc.Select(
                                                 id='volChoiceMenu',
                                                 size='md',
-                                                style={'width':'10em'},
+                                                style={'width':'12em'},
                                                 options=[
                                                     {'value':'volTotum', 'label':'Totum'},
                                                     {'value':'volHipponax', 'label':'Hipponax','disabled':True},
@@ -144,16 +144,15 @@ def Search_wizard():
                                                 placeholder='Коллекция', 
                                             )
                                         ],
-                                        style={}
+                                        style={'padding-left':'4pt','margin-right':'20pt','margin-bottom':'5pt'}
                                     ),
                                     html.Div(
                                         id='zoneContainer',
                                         children=[
-                                            # html.H6('Зона поиска:'),
                                             dbc.Select(
                                                 id='zoneChoiceMenu',
                                                 size='md',
-                                                style={'width':'10em'},
+                                                style={'width':'12em'},
                                                 options=[
                                                     {'value':'titleChoice', 'label':'Заголовок'},
                                                     {'value':'subtitleChoice', 'label':'Подзаголовок'},
@@ -165,10 +164,10 @@ def Search_wizard():
                                                 placeholder='Зона поиска', 
                                             )
                                         ],
-                                        style={'padding-left':'4pt','margin-right':'100pt'}
+                                        style={'padding-left':'4pt','margin-right':'20pt'}
                                     ),
                                 ],
-                                style={'display':'flex','flex-direction':'row','justify-content':'flex-start'}
+                                style={'display':'flex','flex-direction':'column','justify-content':'flex-start','align-items':'stretch'}
                             ),
                             html.Div(
                                 id='hiddenContainer',
@@ -184,32 +183,56 @@ def Search_wizard():
                                 style={'display':'none'}
                             ),
                             html.Div(
-                                id='zoneButtonContainer',
+                                id='twoButtonRowsContainer',
                                 children=[
-                                    # html.H6('Управление:'),
-                                    dbc.ButtonGroup(
-                                        id='searchControlGroup',
+                                    html.Div(
+                                        id='zoneButtonContainer01',
                                         children=[
-                                            dbc.Button(id='virtualKeyBoardButton',children='⌨',color='primary',n_clicks=0,disabled=True,style={'font-family':'monospace'}),
-                                            dbc.Button(id='allWordSection',children='⋮|',color='info',n_clicks=0,disabled=True),
-                                            dbc.Button(id='softWordSectionFree',children='|',color='primary',n_clicks=0,disabled=True,style={'font-family':'monospace'}),
-                                            dbc.Button(id='wordSectionFree',children='_',color='primary',n_clicks=0,disabled=True,style={'font-family':'monospace'}),
-                                            dbc.Button(id='exactSearch',children='=',color='primary',n_clicks=0,disabled=False,style={'font-family':'monospace'}),
-                                            dbc.Button(id='textSearch',children='T',color='primary',n_clicks=0,disabled=True,style={'font-family':'serif'}),
-                                            dbc.Button(id='addCondition',children='✎',color='primary',n_clicks=0, disabled=True,style={'font-family':'monospace'}),
-                                            dbc.Button(id='execQuery', children='▷',color='primary', disabled=True,n_clicks=0,style={'font-family':'monospace'})
-                                        ]
+                                            dbc.ButtonGroup(
+                                                id='searchControlGroup01',
+                                                children=[
+                                                    dbc.Button(id='virtualKeyBoardButton',children='⌨',color='primary',n_clicks=0,disabled=True,style={'font-family':'monospace','width':'3em'}),
+                                                    dbc.Button(id='magicButton',children='⍶',color='primary',n_clicks=0,disabled=True,style={'font-family':'sans-serif','width':'3em'}),
+                                                    dbc.Button(id='allWordSection',children='⋮|',color='info',n_clicks=0,disabled=True,style={'font-family':'sans-serif','width':'3em'}),
+                                                    dbc.Button(id='softWordSectionFree',children='|',color='primary',n_clicks=0,disabled=True,style={'font-family':'monospace','width':'3em'}),
+                                                    dbc.Button(id='wordSectionFree',children='_',color='primary',n_clicks=0,disabled=True,style={'font-family':'monospace','width':'3em'}),
+                                                    dbc.Button(id='helpButton', children='?',color='primary', disabled=False,n_clicks=0,style={'font-family':'serif','width':'3em'}),
+                                                ],
+                                            ),
+                                            dbc.Tooltip('Виртуальная клавиатура',target='virtualKeyBoardButton',placement='bottom'),
+                                            dbc.Tooltip('Преобразование макрокодов в греческие буквы или метрические символы',target='magicButton',placement='bottom'),
+                                            dbc.Tooltip('Учитываются все словоразделы',target='allWordSection',placement='bottom'),
+                                            dbc.Tooltip('Учтываются только жесткие словоразделы',target='softWordSectionFree',placement='bottom'),
+                                            dbc.Tooltip('Поиск без всех словоразделов',target='wordSectionFree',placement='bottom'),
+                                            dbc.Tooltip('Справка по макрокодам',target='helpButton',placement='bottom'),
+                                        ],
+                                        style={'margin-bottom':'5pt'}
                                     ),
-                                    dbc.Tooltip('Виртуальная клавиатура',target='virtualKeyBoardButton',placement='bottom'),
-                                    dbc.Tooltip('Учитываются все словоразделы',target='allWordSection',placement='bottom'),
-                                    dbc.Tooltip('Учтываются только жесткие словоразделы',target='softWordSectionFree',placement='bottom'),
-                                    dbc.Tooltip('Поиск без всех словоразделов',target='wordSectionFree',placement='bottom'),
-                                    dbc.Tooltip('Поиск по точному совпадению',target='exactSearch',placement='bottom'),
-                                    dbc.Tooltip('Полнотекстовый поиск',target='textSearch',placement='bottom'),
-                                    dbc.Tooltip('Записать условие поиска',target='addCondition',placement='bottom'),
-                                    dbc.Tooltip('Выполнить запрос',target='execQuery',placement='bottom'),
-                                ]
-                            ),
+                                    html.Div(
+                                        id='zoneButtonContainer02',
+                                        children=[
+                                            dbc.ButtonGroup(
+                                                id='searchControlGroup02',
+                                                children=[
+                                                    dbc.Button(id='exactSearch',children='=',color='primary',n_clicks=0,disabled=False,style={'font-family':'monospace','width':'3em'}),
+                                                    dbc.Button(id='textSearch',children='T',color='primary',n_clicks=0,disabled=True,style={'font-family':'serif','width':'3em'}),
+                                                    dbc.Button(id='addCondition',children='✎',color='primary',n_clicks=0, disabled=True,style={'font-family':'monospace','width':'3em'}),
+                                                    dbc.Button(id='execQuery', children='▶',color='primary', disabled=True,n_clicks=0,style={'font-family':'monospace','width':'3em'}),
+                                                    dbc.Button(id='saveQueryButton', children='🖫',color='primary',disabled=True,n_clicks=0,style={'font-family':'monospace','width':'3em'}),
+                                                    dbc.Button(id='openQueryButton', children='🗁',color='primary',disabled=True,n_clicks=0,style={'font-family':'monospace','width':'3em'}),
+                                                ],
+                                            ),
+                                            dbc.Tooltip('Поиск по точному совпадению',target='exactSearch',placement='bottom'),
+                                            dbc.Tooltip('Полнотекстовый поиск',target='textSearch',placement='bottom'),
+                                            dbc.Tooltip('Записать условие поиска',target='addCondition',placement='bottom'),
+                                            dbc.Tooltip('Выполнить запрос',target='execQuery',placement='bottom'),
+                                            dbc.Tooltip('Открыть запрос',target='openQueryButton',placement='bottom'),
+                                            dbc.Tooltip('Сохранить запрос',target='saveQueryButton',placement='bottom'),
+                                        ],
+                                    ),
+                                ],
+                                style={'display':'flex','flex-direction':'column','justify-content':'flex-start','align-items':'stretch'}
+                            )
                         ],
                         style={'display':'flex','flex-direction':'row','justify-content':'space-between','align-items':'flex-start','margin-bottom':'10pt'}
                     ),
@@ -219,7 +242,6 @@ def Search_wizard():
                             html.Div(
                                 id='zonesearchContainer',
                                 children=[
-                                    # html.H6('Шаблон:'),
                                     dbc.Input(
                                         id="main_input",
                                         placeholder="Шаблон поиска...",
@@ -228,7 +250,6 @@ def Search_wizard():
                                         value="", 
                                         size="md",
                                         html_size=46,
-                                        # class_name="me-md-1",
                                         style={"height":"2em","fontFamily":"monospace"}
                                     ),
                                     html.Div(
@@ -249,7 +270,7 @@ def Search_wizard():
                         style={'display':'flex','flex-direction':'row','justify-content':'center','align-items':'flex-start'}
                     )
                 ],
-                style={'display':'flex','flex-direction':'column','justify-content':'center'}
+                style={'display':'flex','flex-direction':'column','justify-content':'center'},
             ),
             dbc.Accordion(
                 id='conditionStore',
@@ -298,9 +319,6 @@ def Search_wizard():
                                     },                                      
                                 ],
                                 row_deletable=True,
-                                # export_columns ='all',
-                                # export_format='csv',
-                                # export_headers='names',
                             ),
                             html.Div(
                                 id='buttonClearConditionListContainer',
@@ -418,6 +436,30 @@ def Search_wizard():
                         id='queryResultList',
                         title='Результаты запроса',
                         children=[
+                            html.Div(
+                                id='saveResultsContainer',
+                                children=[
+                                    dbc.Button(
+                                        id='saveQueryResults',
+                                        children='🖫🗐', 
+                                        n_clicks=0, 
+                                        size='md', 
+                                        color='primary', 
+                                    ),
+                                    dbc.Button(
+                                        id='saveResultPage',
+                                        children='🖫🗏', 
+                                        n_clicks=0, 
+                                        size='md', 
+                                        color='primary', 
+                                    ),
+                                    dbc.Tooltip('Сохранить все результаты запроса',target='saveQueryResults',placement='top'),
+                                    dbc.Tooltip('Сохранить текущую страницу результатов',target='saveResultPage',placement='top'),
+                                ],
+                                style={'display':'none'},
+                            ),
+
+                            dcc.Download(id="downloadQueryResults"),
                             dbc.Pagination(
                                 id='showPage',
                                 first_last=True,
@@ -464,6 +506,197 @@ def Search_wizard():
                 ],
                 start_collapsed=True,
             ),
+            dbc.Offcanvas(
+                id='helpPlace',
+                children=[
+                    html.Div(
+                        children=[
+                            html.H6('Макрокоды для метрических символов',),
+                            dbc.Button(
+                                id='metricSymbolsCollapse', 
+                                children='Показать', 
+                                n_clicks=0, 
+                                outline=False, 
+                                color='primary',
+                                size='sm',
+                                style={'width':'6em'},
+                            ),
+                        ],
+                        style={
+                            'margin-bottom':'1em',
+                            'display':'flex',
+                            'flex-direction':'row',
+                            'justify-content':'space-between',
+                            'align-items':'flex-start',
+                        },
+                    ),
+                    dbc.Collapse(
+                        children=[
+                            dt.DataTable(
+                                id='charTable01',
+                                columns=[
+                                    {"name": 'Номер', "id":'id' },
+                                    {"name": 'Код', "id":'macro_code' },
+                                    {"name": 'Символ', "id":'char_image' },
+                                ],
+                                data=[
+                                    {'id':'1','macro_code':'U+U_','char_image':'⏕'},
+                                    {'id':'2','macro_code':'U+U!','char_image':'⏔'},
+                                    {'id':'3','macro_code':'U+U','char_image':'⏖'},
+                                    {'id':'4','macro_code':'U_','char_image':'⏓'},
+                                    {'id':'5','macro_code':'U!','char_image':'⏒'},
+                                    {'id':'6','macro_code':'U','char_image':'⏑'},
+                                    {'id':'7','macro_code':'1','char_image':'¹'},
+                                    {'id':'8','macro_code':'2','char_image':'²'},
+                                    {'id':'9','macro_code':'3','char_image':'³'},
+                                    {'id':'10','macro_code':'4','char_image':'⁴'},
+                                    {'id':'11','macro_code':'5','char_image':'⁵'},
+                                    {'id':'12','macro_code':'6','char_image':'⁶'},
+                                    {'id':'13','macro_code':'|_','char_image':'┋'},
+                                    {'id':'14','macro_code':'|.','char_image':'⋮'},
+                                    {'id':'15','macro_code':'|||','char_image':'⦀'},
+                                    {'id':'16','macro_code':'||','char_image':'‖'},                                    
+                                    {'id':'17','macro_code':'X','char_image':'⨯'},
+                                    {'id':'18','macro_code':'O','char_image':'⚬'},
+                                ],
+                                style_cell={'text-align': 'center','padding-left':'1em','padding-right':'1em'},
+                                style_header={
+                                    'font-weight': 'bold',
+                                },
+                                cell_selectable=False,
+                                style_cell_conditional=[
+                                    {
+                                        'if': {'column_id': 'id'},
+                                        'text-align': 'right',
+                                        'width':'20%',
+                                    },
+                                    {
+                                        'if': {'column_id': 'macro_code'},
+                                        'width':'40%',
+                                    },
+                                    {
+                                        'if': {'column_id': 'char_image'},
+                                        'width':'40%',
+                                    },
+                                ],
+                                row_deletable=False,
+                            ),
+                        ],
+                        id='charTableCollapse01',
+                        is_open=False,
+                    ),
+                    html.Div(
+                        children=[
+                            html.H6('Макрокоды для греческих букв',),
+                            dbc.Button(
+                                id='greekLettersCollapse', 
+                                children='Показать', 
+                                n_clicks=0, 
+                                outline=False, 
+                                color='primary',
+                                size='sm',
+                                style={'width':'6em'},
+                            ),
+                        ],
+                        style={
+                            'margin-bottom':'1em', 
+                            'margin-top':'2em', 
+                            'display':'flex',
+                            'flex-direction':'row',
+                            'justify-content':'space-between',
+                            'align-items':'flex-start',
+                        },
+                    ),
+                    dbc.Collapse(
+                        children=[
+                            dt.DataTable(
+                                id='charTable02',
+                                columns=[
+                                    {"name": 'Номер', "id":'id' },
+                                    {"name": 'Код', "id":'macro_code' },
+                                    {"name": 'Символ', "id":'char_image' },
+                                ],
+                                data=[
+                                    {'id':'1','macro_code':'A','char_image':'Α'},
+                                    {'id':'2','macro_code':'B','char_image':'Β'},
+                                    {'id':'3','macro_code':'G','char_image':'Γ'},
+                                    {'id':'4','macro_code':'D','char_image':'Δ'},
+                                    {'id':'5','macro_code':'E','char_image':'Ε'},
+                                    {'id':'6','macro_code':'Z','char_image':'Ζ'},
+                                    {'id':'7','macro_code':'H','char_image':'Η'},
+                                    {'id':'8','macro_code':'Q','char_image':'Θ'},
+                                    {'id':'9','macro_code':'I','char_image':'Ι'},
+                                    {'id':'10','macro_code':'K','char_image':'Κ'},
+                                    {'id':'11','macro_code':'L','char_image':'Λ'},
+                                    {'id':'12','macro_code':'M','char_image':'Μ'},
+                                    {'id':'13','macro_code':'N','char_image':'Ν'},
+                                    {'id':'14','macro_code':'J','char_image':'Ξ'},
+                                    {'id':'15','macro_code':'O','char_image':'Ο'},
+                                    {'id':'16','macro_code':'P','char_image':'Π'},                                    
+                                    {'id':'17','macro_code':'R','char_image':'Ρ'},
+                                    {'id':'18','macro_code':'S','char_image':'Σ'},
+                                    {'id':'19','macro_code':'T','char_image':'Τ'},
+                                    {'id':'20','macro_code':'Y','char_image':'Υ'},
+                                    {'id':'21','macro_code':'F','char_image':'Φ'},
+                                    {'id':'22','macro_code':'X','char_image':'Χ'},
+                                    {'id':'23','macro_code':'C','char_image':'Ψ'},
+                                    {'id':'24','macro_code':'W','char_image':'Ω'},
+                                    {'id':'25','macro_code':'a','char_image':'α'},
+                                    {'id':'26','macro_code':'b','char_image':'β'},
+                                    {'id':'27','macro_code':'g','char_image':'γ'},
+                                    {'id':'28','macro_code':'d','char_image':'δ'},
+                                    {'id':'29','macro_code':'e','char_image':'ε'},
+                                    {'id':'30','macro_code':'z','char_image':'ζ'},
+                                    {'id':'31','macro_code':'h','char_image':'η'},
+                                    {'id':'32','macro_code':'q','char_image':'θ'},
+                                    {'id':'33','macro_code':'i','char_image':'ι'},
+                                    {'id':'34','macro_code':'k','char_image':'κ'},
+                                    {'id':'35','macro_code':'l','char_image':'λ'},
+                                    {'id':'36','macro_code':'m','char_image':'μ'},
+                                    {'id':'37','macro_code':'n','char_image':'ν'},
+                                    {'id':'38','macro_code':'j','char_image':'ξ'},
+                                    {'id':'39','macro_code':'o','char_image':'ο'},
+                                    {'id':'40','macro_code':'p','char_image':'π'},
+                                    {'id':'41','macro_code':'r','char_image':'ρ'},
+                                    {'id':'42','macro_code':'s','char_image':'σ'},
+                                    {'id':'43','macro_code':'t','char_image':'τ'},
+                                    {'id':'44','macro_code':'y','char_image':'υ'},
+                                    {'id':'45','macro_code':'f','char_image':'φ'},
+                                    {'id':'46','macro_code':'x','char_image':'χ'},
+                                    {'id':'47','macro_code':'c','char_image':'ψ'},
+                                    {'id':'48','macro_code':'w','char_image':'ω'},
+                                    {'id':'49','macro_code':'$','char_image':'ς'},
+                                ],
+                                style_cell={'text-align': 'center','padding-left':'1em','padding-right':'1em'},
+                                style_header={
+                                    'font-weight': 'bold',
+                                },
+                                cell_selectable=False,
+                                style_cell_conditional=[
+                                    {
+                                        'if': {'column_id': 'id'},
+                                        'text-align': 'right',
+                                        'width':'20%',
+                                    },
+                                    {
+                                        'if': {'column_id': 'macro_code'},
+                                        'width':'40%',
+                                    },
+                                    {
+                                        'if': {'column_id': 'char_image'},
+                                        'width':'40%',
+                                    },
+                                ],
+                                row_deletable=False,
+                            ),                
+                        ],
+                        id='charTableCollapse02',
+                        is_open=False,
+                    ),
+                ],
+                placement='start',
+                is_open=False,
+            ),
             # html.Div(
             #     id='debugging_place',
             #     children=[
@@ -478,7 +711,100 @@ def Search_wizard():
         ]
     )
 
+def Under_construction(t):
+    return dbc.Alert(
+        children=[
+            html.Div(
+                children=[
+                    html.H1(t+' находится в стадии разработки!'),
+                    html.Div(
+                        children=[
+                            html.Img(src=app.get_asset_url('images/under_construction.png')),
+                        ],
+                        style={'margin-top':'30pt','margin-bottom':'30pt'}
+                    ),  
+                ],
+            ),                     
+        ],
+        color='primary',
+    )
 
+
+def Some_utility():
+    return html.Div(
+        id='some_utility_view',
+        children=[
+            dbc.Accordion(
+                id='various_utility',
+                children=[
+                    dbc.AccordionItem(
+                        id='browse_md_file',
+                        title='Просмотр файла .MD',
+                        children=[
+                            html.Div(
+                                [
+                                    html.Div(
+                                        [
+                                            dcc.Upload(
+                                                html.Div(
+                                                    dbc.Button(
+                                                        '🗁', 
+                                                        color="primary",
+                                                        id='open_md_file',
+                                                        n_clicks=0,
+                                                        style={'font-family':'monospace','font-weight':'bold',}
+                                                    ),
+                                                ),
+                                                id='my_md_file',
+                                            ),
+                                            # dbc.Spinner(
+                                            #     id='load_md_spinner',
+                                            #     color='primary',
+                                            #     size='md',
+                                            #     spinner_style={'display':'none'}
+                                            # ),
+                                            dbc.Button(
+                                                        '🗀', 
+                                                        color="primary",
+                                                        id='close_md_file',
+                                                        n_clicks=0,
+                                                        style={'font-family':'monospace','font-weight':'bold',},
+                                            ),
+                                        ],
+                                        style={'display':'flex','flex-direction':'row','justify-content':'space-between'}
+                                    ),
+                                    dcc.Markdown(
+                                        children='',
+                                        id='md_file_for_browsing', 
+                                        dangerously_allow_html=True,
+                                        style={"margin-top":"10pt","margin-left":"20pt","margin-right":"20pt","margin-bottom":"10pt"},
+                                    ),
+                                    dbc.Tooltip('Открыть файл .MD', target='open_md_file', placement='right'),
+                                    dbc.Tooltip('Закрыть файл .MD', target='close_md_file', placement='left'), 
+                                ],
+                            )                       
+                        ],
+                    ),
+                    dbc.AccordionItem(
+                        id='edit_json',
+                        title='Просмотр и редактирование файла .JSON',
+                        children=[
+                            Under_construction('Раздел "Просмотр и редактирование файла .JSON"'),
+                        ],
+                    ),
+                    dbc.AccordionItem(
+                        id='edit_DB',
+                        title='Редактирование базы данных',
+                        children=[
+                            Under_construction('Раздел "Редактирование базы данных"'),
+                        ],
+                    ),
+                ],
+                start_collapsed=True,
+            ),
+        ],
+        style={'margin':'10pt'},
+    )
 
 
 app.layout = html.Div(
@@ -495,7 +821,11 @@ app.layout = html.Div(
                 dbc.Tab(
                     label='Ранние греческие тексты', 
                     tab_id='search_wizard',
-                )
+                ),
+                dbc.Tab(
+                    label='Утилиты',
+                    tab_id='utility',
+                ),
             ],
             style={'cursor':'pointer'}
         ),
@@ -516,6 +846,13 @@ app.layout = html.Div(
                     ],
                     style={'display':'none'}
                 ),
+                html.Div(
+                    id='utility_page',
+                    children=[
+                        Some_utility(),
+                    ],
+                    style={'display':'none'}
+                ),
             ]
         )
     ]
@@ -525,8 +862,147 @@ def Get_Tr_Element(tr,k):
     return tr['props']['children'][k]['props']['children']
 
 
+@app.callback(
+    Output('md_file_for_browsing','children'),
+    [
+        Input('open_md_file','n_clicks'),
+        Input('close_md_file','n_clicks'),
+        Input('my_md_file','contents'),
+    ],
+    [
+        State('md_file_for_browsing','children'),
+    ],
+)
+def render_md_content(n_open, n_close, c, ch):
+    dcct=dash.callback_context.triggered
+    if dcct is None:
+        keyid=''
+    else:
+        keyid=dcct[0]['prop_id'].split('.')[0]
+    if keyid=='open_md_file' or keyid=='my_md_file':
+        return uf.loadUTF8(c)
+    elif keyid=='close_md_file':
+        return ''
+    else:
+        return ch
+
+# @app.callback(
+#     [
+#         Output('md_file_for_browsing','children'),
+#         Output('load_md_spinner','spinner_style'),
+#     ],
+#     [
+#         Input('open_md_file','n_clicks'),
+#         Input('close_md_file','n_clicks'),
+#         Input('my_md_file','contents'),
+#     ],
+#     [
+#         State('my_md_file','loading_state'),
+#         State('md_file_for_browsing','children'),
+#         State('load_md_spinner','spinner_style'),
+#     ],
+# )
+# def render_md_content(n_open,n_close,c,ls, ch, ss):
+#     dcct=dash.callback_context.triggered
+#     if dcct is None:
+#         keyid=''
+#     else:
+#         keyid=dcct[0]['prop_id'].split('.')[0]
+#     if keyid=='open_md_file' or keyid=='my_md_file':
+#         return [uf.loadUTF8(c), {'display':'block'} if ls is not None and ls['is_loaded'] else {'display':'none'}]
+#     elif keyid=='close_md_file':
+#         return ['',{'display':'none'}]
+#     else:
+#         return [ch,ls]
 
 
+# @app.callback(
+#     Output('md_file_for_browsing','children'),
+#     [
+#         Input('my_md_file','contents'),
+#         Input('close_md_file','n_clicks'),
+#     ],
+#     [
+#         State('md_file_for_browsing','children'),
+#     ],
+# )
+# def render_md_content(c,n,ch):
+#     dcct=dash.callback_context.triggered
+#     if dcct is None:
+#         keyid=''
+#     else:
+#         keyid=dcct[0]['prop_id'].split('.')[0]
+#     if keyid=='my_md_file':
+#         return uf.loadUTF8(c)
+#     elif keyid=='close_md_file':
+#         return ''
+#     else:
+#         return ch
+    
+
+
+@app.callback(
+    Output('downloadQueryResults','data'),
+    [Input('saveQueryResults','n_clicks')],
+    [
+        State('place4number','children'),
+        State('place4list','children'),
+        State('listForOnePage','children'),
+        State('storeForQueryResults','data'),
+    ]
+)
+def SaveQueryResultsToLocalComp(n, p4n, p4l, l1p, d):
+    if n:
+        if p4n!='':
+            out_number='#### '+p4n+'\n\n'
+            out_list=''
+        elif p4l!='':
+            out_list='#### '+p4l+'\n\n'
+            out_number=''
+        if l1p==[]:
+            out_md=''
+        else:
+            l=bj.loads(d)
+            out_md='\n\n'.join(['###### '+str(i+1)+'\n'+l[i] for i in range(len(l))])
+        return dict(content=out_number+out_list+out_md, filename="query_results_"+re.sub('[-:. ]','_',str(dtm.now()))+".md")
+
+
+
+@app.callback(
+    [Output('charTableCollapse01','is_open'),Output('metricSymbolsCollapse','children')],
+    [Input('metricSymbolsCollapse','n_clicks')],
+    [State('charTableCollapse01','is_open'),State('metricSymbolsCollapse','children')],
+)
+def ToggleCollapse001(n, is_open,ch):
+    if n:
+        if is_open:
+            return [False, 'Показать']
+        else:
+            return [True, 'Скрыть']
+    else:
+        return [is_open, ch]
+
+@app.callback(
+    [Output('charTableCollapse02','is_open'),Output('greekLettersCollapse','children')],
+    [Input('greekLettersCollapse','n_clicks')],
+    [State('charTableCollapse02','is_open'), State('greekLettersCollapse','children')],
+)
+def ToggleCollapse002(n, is_open,ch):
+    if n:
+        if is_open:
+            return [False, 'Показать']
+        else:
+            return [True, 'Скрыть']
+    else:
+        return [is_open, ch]
+
+@app.callback(
+    Output('helpPlace','is_open'),
+    [Input('helpButton','n_clicks')]
+)
+def ShowHelp(n):
+    if n is not None and n>0:
+        return True
 
 
 formatOptionsKeysAndValues={
@@ -648,6 +1124,7 @@ def ChangeClearButtonStyle(v):
         Output('showPage','max_value'), 
         Output('showPage','style'),
         ##########################################
+        Output('saveResultsContainer','style'),
     ],
     [
         Input('OkButton','n_clicks'),
@@ -666,9 +1143,10 @@ def ChangeClearButtonStyle(v):
         State('showPage','max_value'), 
         State('showPage','style'),
         ##########################################
+        State('saveResultsContainer','style'),
     ]
 )
-def OpenCloseQueryModal(n_Ok,n_Error, v,ap,data_list,q_type,q_size,l_ch,l_st,sp_mv,sp_st):
+def OpenCloseQueryModal(n_Ok,n_Error, v,ap,data_list,q_type,q_size,l_ch,l_st,sp_mv,sp_st, sqr_st):
     sz=int(q_size)
     pq=max(1, sz//5 + (1 if sz%5>0 else 0))
     md_style={
@@ -677,7 +1155,7 @@ def OpenCloseQueryModal(n_Ok,n_Error, v,ap,data_list,q_type,q_size,l_ch,l_st,sp_
         'margin':'10pt',
         'padding':'10pt',
         'border':'1px solid lightgray',
-        'border-radius':'3pt'
+        'border-radius':'3pt',
     }    
     dcct=dash.callback_context.triggered
     if dcct is None:
@@ -689,6 +1167,7 @@ def OpenCloseQueryModal(n_Ok,n_Error, v,ap,data_list,q_type,q_size,l_ch,l_st,sp_
             False, False,
             [], {'display':'none'},
             1, {'display':'none'},
+            {'display':'none'},
         ]
     elif keyid=='OkButton':
         if q_type=='number' or q_type=='list':
@@ -696,13 +1175,18 @@ def OpenCloseQueryModal(n_Ok,n_Error, v,ap,data_list,q_type,q_size,l_ch,l_st,sp_
                 False, False,
                 [], {'display':'none'},
                 1, {'display':'none'},
+                {'display':'none'},
             ]
         elif q_type=='cursor':
             k=min(sz,5)
             l=bj.loads(data_list)[:k]
             li=dbc.ListGroupItem(
                 children=[
-                    dcc.Markdown(children='###### '+str(i+1)+'\n'+l[i]['content']['markdown'],style=md_style)
+                    ##############################################
+                    # VERY IMPORTANT                             #
+                    ##############################################
+                    # dcc.Markdown(children='###### '+str(i+1)+'\n'+l[i]['content']['markdown'],style=md_style)
+                    dcc.Markdown(children='###### '+str(i+1)+'\n'+l[i], style=md_style)
                     for i in range(len(l))
                 ]
             )
@@ -710,6 +1194,7 @@ def OpenCloseQueryModal(n_Ok,n_Error, v,ap,data_list,q_type,q_size,l_ch,l_st,sp_
                 False, False,
                 [li],{'display':'block'} if sz>0 else {'display':'none'},
                 pq, {'display':'flex', 'flex-direction':'row','justify-content':'center'} if pq>1 else {'display':'none'},
+                {'display':'flex','flex-direction':'row','justify-content':'space-between','align-items':'stretch','margin-bottom':'5pt'},
             ]
     elif keyid=='OkErrorSwith':
         if v=='Ok':
@@ -717,18 +1202,21 @@ def OpenCloseQueryModal(n_Ok,n_Error, v,ap,data_list,q_type,q_size,l_ch,l_st,sp_
                 True,False,
                 [], {'display':'none'},
                 1, {'display':'none'},
+                {'display':'none'},
             ]
         elif v=='Error':
             return [
                 False,True,
                 [], {'display':'none'},
                 1, {'display':'none'},
+                {'display':'none'},
             ]
         else:
             return [
                 False,False,
                 [], {'display':'none'},
                 1, {'display':'none'},
+                {'display':'none'},
             ]
     elif keyid=='showPage':
         b=(ap-1)*5
@@ -736,7 +1224,11 @@ def OpenCloseQueryModal(n_Ok,n_Error, v,ap,data_list,q_type,q_size,l_ch,l_st,sp_
         l=bj.loads(data_list)[b:e]
         li=dbc.ListGroupItem(
             children=[
-                dcc.Markdown(children='###### '+str((ap-1)*5+i+1)+'\n'+l[i]['content']['markdown'],style=md_style)
+                #######################################################
+                # VERY IMPORTANT                                      #
+                #######################################################
+                # dcc.Markdown(children='###### '+str((ap-1)*5+i+1)+'\n'+l[i]['content']['markdown'],style=md_style)
+                dcc.Markdown(children='###### '+str((ap-1)*5+i+1)+'\n'+l[i], style=md_style)
                 for i in range(len(l))
             ]
         )
@@ -744,12 +1236,14 @@ def OpenCloseQueryModal(n_Ok,n_Error, v,ap,data_list,q_type,q_size,l_ch,l_st,sp_
             False, False,
             [li],{'display':'block'} if sz>0 else {'display':'none'},
             pq, {'display':'flex', 'flex-direction':'row','justify-content':'center'} if pq>1 else {'display':'none'},
+            {'display':'flex','flex-direction':'row','justify-content':'space-between','align-items':'stretch','margin-bottom':'5pt'},
         ]
     else:
         return [
             False,False,
             l_ch,l_st,
-            sp_mv,sp_st
+            sp_mv,sp_st,
+            sqr_st,
         ]
 
 
@@ -896,8 +1390,12 @@ def Render_Query_Results(
                 '', {'display':'none'},
                 # [li],{'display':'block'} if sz>0 else {'display':'none'},
                 # pq, {'display':'flex', 'flex-direction':'row','justify-content':'center'} if pq>1 else {'display':'none'},
+                ##########################################################
+                # VERY IMPORTANT                                         #
+                ##########################################################
                 'Ok',
-                bj.dumps(list(result_content[1])),
+                # bj.dumps(list(result_content[1])),
+                bj.dumps([x['content']['markdown'] for x in result_content[1]]),
                 'cursor',
                 str(sz),
             ]
@@ -1244,7 +1742,8 @@ def StoreCurrentCondition(n,n1,sc_ch, cc_n,v_l,z_l,v, aw_S_c, sw_SF_c, w_SF_c, e
 
 @app.callback(
     [
-        Output('virtualKeyBoardButton','disabled'),Output('allWordSection','disabled'), 
+        Output('virtualKeyBoardButton','disabled'),Output('magicButton','disabled'),
+        Output('allWordSection','disabled'), 
         Output('softWordSectionFree','disabled'),Output('wordSectionFree','disabled'),
         Output('exactSearch','disabled'),Output('textSearch','disabled'),
 
@@ -1254,13 +1753,27 @@ def StoreCurrentCondition(n,n1,sc_ch, cc_n,v_l,z_l,v, aw_S_c, sw_SF_c, w_SF_c, e
 def ChangeVirtualKbdButton(v):
     if v is not None and v in ['schemeChoice','rithmChoice','srcChoice']:
         if v=='srcChoice':
-            return [False,True,True,True,False,True]
+            return [False,False,True,True,True,False,True]
         else:     
-            return [False,False,False,False,False,True]
+            return [False,False,False,False,False,False,True]
     elif v=='transChoice':
-        return [True,True,True,True,False,False]
+        return [True,True,True,True,True,False,False]
     else:
-        return [True,True,True,True,False,True] 
+        return [True,True,True,True,True,False,True] 
+
+'''
+def ChangeVirtualKbdButton(v):
+    if v is not None and v in ['schemeChoice','rithmChoice','srcChoice']:
+        if v=='srcChoice':
+            return [False,False,True,True,True,False,True]
+        else:     
+            return [False,False,False,False,False,False,True]
+    elif v=='transChoice':
+        return [True,True,True,True,True,False,False]
+    else:
+        return [True,True,True,True,True,False,True] 
+
+'''
 
 @app.callback(
     Output('addCondition','disabled'),
@@ -1299,14 +1812,17 @@ def ButtonVirtualKbdClick(n, v, c):
     [
         Output('project_page','style'),
         Output('search_page','style'),
+        Output('utility_page','style',)
     ],
     [Input('main_tabs','active_tab')],
 )
 def render_content(tab):
     if tab=='this_project':
-        return [{'display':'block'},{'display':'none'}]
+        return [{'display':'block'},{'display':'none'},{'display':'none'}]
     elif tab=='search_wizard':
-        return [{'display':'none'},{'display':'block'}]
+        return [{'display':'none'},{'display':'block'},{'display':'none'}]
+    elif tab=='utility':
+        return [{'display':'none'},{'display':'none'},{'display':'block'}]
 
 @app.callback(
     Output("lastkeyid","value"),
@@ -1342,7 +1858,8 @@ def render_content(tab):
         Input("tilda","n_clicks"),
         Input("bar_1","n_clicks"),Input("bar_2","n_clicks"),Input("bar_3","n_clicks"),
         Input("dotted_bar","n_clicks"),Input("dashed_bar","n_clicks"),
-        Input("mspace","n_clicks"),Input("mbackspace","n_clicks")
+        Input("mspace","n_clicks"),Input("mbackspace","n_clicks"),
+        Input('magicButton','n_clicks'),
     ]
 )
 
@@ -1362,7 +1879,8 @@ def SendDashParams(
     n_bar_1,n_bar_2,
     n_bar_3,n_dotted_bar,n_dashed_bar,
     n_mspase,
-    n_mbackspace    
+    n_mbackspace,
+    n_magicButton    
     ):
     dcct=dash.callback_context.triggered
     if dcct is None:
@@ -1394,7 +1912,8 @@ app.clientside_callback(
         Output('inputmode','value'), 
         Input('lastkeyid','value'), 
         State('inputmode','value'), 
-        State("main_input","value")
+        State("main_input","value"),
+        State('zoneChoiceMenu','value'),
 )
 
 
