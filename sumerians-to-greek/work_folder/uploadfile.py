@@ -1,5 +1,5 @@
 import base64
-#import pandas as pd
+import pandas as pd
 import json as j
 
 def loadUTF8(c):
@@ -21,14 +21,12 @@ def loadCSV(c,sep=',',decimal='.'):
             x=c.split(',')
             c=x[1]
             c = base64.b64decode(c)
-            #df=pd.read_csv(io.StringIO(c.decode('utf-8')),sep=sep,decimal=decimal)
+            df=pd.read_csv(io.StringIO(c.decode('utf-8')),sep=sep,decimal=decimal)
         except:
-            return None
-            #return pd.DataFrame()
+            return pd.DataFrame()
         return df
     else:
-        return None
-        #return pd.DataFrame()
+        return pd.DataFrame()
 
 def loadJSON(c):
     s=loadUTF8(c)
