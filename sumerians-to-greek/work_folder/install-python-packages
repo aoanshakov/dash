@@ -25,7 +25,7 @@ then
         exit 1
     fi
 
-    $PIP install -v uwsgi dash dash_bootstrap_components pymongo
+    $PIP install -v uwsgi dash dash_bootstrap_components pymongo pandas
 
     if [ $? -ne 0 ]
     then
