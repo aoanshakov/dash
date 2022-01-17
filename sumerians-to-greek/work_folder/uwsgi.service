@@ -3,7 +3,6 @@ Description=uWSGI instance to serve sumerians-to-greek
 After=network.target
 
 [Service]
-Type=forking
 User=root
 Group=www-data
 WorkingDirectory=/usr/local/src/sumerians-to-greek/work_folder

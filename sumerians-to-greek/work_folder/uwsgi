@@ -7,7 +7,7 @@ PID=$WD/uwsgi.pid
 do_start()
 {
     echo "Starting application"
-    cd $WD && $UWSGI --ini $WD/uwsgi.ini
+    cd $WD && $UWSGI --ini $WD/uwsgi.ini --daemonize /var/log/uwsgi/uwsgi.log
 }
 
 do_stop()
