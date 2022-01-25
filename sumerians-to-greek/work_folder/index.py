@@ -65,16 +65,26 @@ preQueryKeyAndValues={
     '':'',
 }
 
-app = dash.Dash(__name__,external_stylesheets=[dbc.themes.BOOTSTRAP,dbc.icons.BOOTSTRAP])
-server = app.server
+
+Greek_Letters_And_Diacritics={
+    'Ι':'[ΙἼ]',
+    'α':'[αάἀἂἄἆὰάᾶ]',
+    'ε':'[εέἐἑἒἔὲέ]',
+    'η':'[ηήἠἢἤἦὴήῆ]',
+    'ι':'[ιίϊἰἴἶὶίῐΐῖ]',
+    'ο':'[οόὀὂὄὸό]',
+    'ρ':'[ρῤ]',
+    'υ':'[υϋύὐὔὖὺύῦΰ]',
+    'ω':'[ωὠὢὤὦὼώῶ]',
+}
+
+
+app = dash.Dash(__name__,external_stylesheets=[dbc.themes.BOOTSTRAP,dbc.icons.FONT_AWESOME,dbc.icons.BOOTSTRAP])
+
+server=app.server
 
 app.title="Древнейшие стихоложения мира"
 app.config.suppress_callback_exceptions=True
-
-
-
-
-
 
 Main_footer=html.Footer(children='Работа над проектом поддержана грантом РНФ № 18-18-00503 «Древнейшие стихосложения мира: от шумеров к грекам».',
         style={'width':'90%','height':'2%','color':'royalblue','font-size':'1.2em', 'font-style':'italic',
@@ -192,16 +202,16 @@ def Search_wizard():
                                             dbc.ButtonGroup(
                                                 id='searchControlGroup01',
                                                 children=[
-                                                    dbc.Button(id='virtualKeyBoardButton',children='⌨',color='primary',n_clicks=0,disabled=True,style={'font-family':'monospace','width':'3em'}),
-                                                    dbc.Button(id='magicButton',children='⍶',color='primary',n_clicks=0,disabled=True,style={'font-family':'sans-serif','width':'3em'}),
-                                                    dbc.Button(id='allWordSection',children='⋮|',color='info',n_clicks=0,disabled=True,style={'font-family':'sans-serif','width':'3em'}),
-                                                    dbc.Button(id='softWordSectionFree',children='|',color='primary',n_clicks=0,disabled=True,style={'font-family':'monospace','width':'3em'}),
-                                                    dbc.Button(id='wordSectionFree',children='_',color='primary',n_clicks=0,disabled=True,style={'font-family':'monospace','width':'3em'}),
-                                                    dbc.Button(id='helpButton', children='?',color='primary', disabled=False,n_clicks=0,style={'font-family':'serif','width':'3em'}),
+                                                    dbc.Button(id='virtualKeyBoardButton',children=[html.I(className='fa fa-keyboard text-white')],color='primary',n_clicks=0,disabled=True,style={'font-family':'monospace','width':'3em'}),
+                                                    dbc.Button(id='magicButton',children=[html.I(className='fa fa-magic text-white')],color='primary',n_clicks=0,disabled=True,style={'font-family':'sans-serif','width':'3em'}),
+                                                    dbc.Button(id='allWordSection',children='⋮|',color='info',n_clicks=0,disabled=True,style={'font-family':'Arial, sans-serif','font-weight':'900','width':'3em'}),
+                                                    dbc.Button(id='softWordSectionFree',children='|',color='primary',n_clicks=0,disabled=True,style={'font-family':'Arial, sans-serif', 'font-weight':'900','width':'3em'}),
+                                                    dbc.Button(id='wordSectionFree',children='_',color='primary',n_clicks=0,disabled=True,style={'font-family':'monospase','font-weight':'900','width':'3em'}),
+                                                    dbc.Button(id='helpButton', children=[html.I(className='fa fa-question text-white')],color='primary', disabled=False,n_clicks=0,style={'font-family':'serif','width':'3em'}),
                                                 ],
                                             ),
                                             dbc.Tooltip('Виртуальная клавиатура',target='virtualKeyBoardButton',placement='bottom'),
-                                            dbc.Tooltip('Преобразование макрокодов в греческие буквы или метрические символы',target='magicButton',placement='bottom'),
+                                            dbc.Tooltip('"Волшебная палочка": "превращение" макрокодов в греческие буквы или метрические символы',target='magicButton',placement='bottom'),
                                             dbc.Tooltip('Учитываются все словоразделы',target='allWordSection',placement='bottom'),
                                             dbc.Tooltip('Учтываются только жесткие словоразделы',target='softWordSectionFree',placement='bottom'),
                                             dbc.Tooltip('Поиск без всех словоразделов',target='wordSectionFree',placement='bottom'),
@@ -215,18 +225,33 @@ def Search_wizard():
                                             dbc.ButtonGroup(
                                                 id='searchControlGroup02',
                                                 children=[
-                                                    dbc.Button(id='exactSearch',children='=',color='primary',n_clicks=0,disabled=False,style={'font-family':'monospace','width':'3em'}),
-                                                    dbc.Button(id='textSearch',children='T',color='primary',n_clicks=0,disabled=True,style={'font-family':'serif','width':'3em'}),
-                                                    dbc.Button(id='addCondition',children='✎',color='primary',n_clicks=0, disabled=True,style={'font-family':'monospace','width':'3em'}),
-                                                    dbc.Button(id='execQuery', children='▶',color='primary', disabled=True,n_clicks=0,style={'font-family':'monospace','width':'3em'}),
-                                                    dbc.Button(id='saveQueryButton', children='🖫',color='primary',disabled=True,n_clicks=0,style={'font-family':'monospace','width':'3em'}),
-                                                    dbc.Button(id='openQueryButton', children='🗁',color='primary',disabled=True,n_clicks=0,style={'font-family':'monospace','width':'3em'}),
+                                                    dbc.Button(
+                                                        id='exactSearch',
+                                                        children=[html.I(className='fa fa-equals text-white')],
+                                                        color='primary',
+                                                        n_clicks=0,
+                                                        disabled=False,
+                                                        style={'font-family':'monospace','width':'3em'}
+                                                    ),
+                                                    dbc.Button(
+                                                        id='textSearch',
+                                                        children=[html.I(className='fa fa-file-alt text-white')],
+                                                        # children='T',
+                                                        color='primary',
+                                                        n_clicks=0,
+                                                        disabled=True,
+                                                        style={'font-family':'Courier, monospace','font-weyght':'900','width':'3em'}
+                                                    ),
+                                                    dbc.Button(id='addCondition',children=[html.I(className='fa fa-edit text-white')],color='primary',n_clicks=0, disabled=True,style={'font-family':'monospace','width':'3em'}),
+                                                    dbc.Button(id='execQuery', children=[html.I(className='fa fa-search text-white')],color='primary', disabled=True,n_clicks=0,style={'font-family':'monospace','width':'3em'}),
+                                                    dbc.Button(id='saveQueryButton', children=[html.I(className='fa fa-save text-white')],color='primary',disabled=True,n_clicks=0,style={'font-family':'monospace','width':'3em'}),
+                                                    dbc.Button(id='openQueryButton', children=[html.I(className='fa fa-folder-open text-white')],color='primary',disabled=True,n_clicks=0,style={'font-family':'monospace','width':'3em'}),
                                                 ],
                                             ),
                                             dbc.Tooltip('Поиск по точному совпадению',target='exactSearch',placement='bottom'),
                                             dbc.Tooltip('Полнотекстовый поиск',target='textSearch',placement='bottom'),
                                             dbc.Tooltip('Записать условие поиска',target='addCondition',placement='bottom'),
-                                            dbc.Tooltip('Выполнить запрос',target='execQuery',placement='bottom'),
+                                            dbc.Tooltip('Искать (выполнить запрос)',target='execQuery',placement='bottom'),
                                             dbc.Tooltip('Открыть запрос',target='openQueryButton',placement='bottom'),
                                             dbc.Tooltip('Сохранить запрос',target='saveQueryButton',placement='bottom'),
                                         ],
@@ -442,25 +467,29 @@ def Search_wizard():
                                 children=[
                                     dbc.Button(
                                         id='saveQueryResults',
-                                        children='🖫🗐', 
+                                        children='Сохранить все результаты запроса', 
                                         n_clicks=0, 
                                         size='md', 
                                         color='primary', 
+                                        style={'margin-right':'5pt','margin-bottom':'10pt'},
                                     ),
                                     dbc.Button(
                                         id='saveResultPage',
-                                        children='🖫🗏', 
+                                        children='Сохранить текущую страницу результатов', 
                                         n_clicks=0, 
                                         size='md', 
-                                        color='primary', 
+                                        color='primary',
+                                        disabled=False,
+                                        style={'margin-left':'5pt','margin-bottom':'10pt'},
                                     ),
-                                    dbc.Tooltip('Сохранить все результаты запроса',target='saveQueryResults',placement='top'),
-                                    dbc.Tooltip('Сохранить текущую страницу результатов',target='saveResultPage',placement='top'),
+                                    # dbc.Tooltip('Сохранить все результаты запроса',target='saveQueryResults',placement='top'),
+                                    # dbc.Tooltip('Сохранить текущую страницу результатов',target='saveResultPage',placement='top'),
                                 ],
                                 style={'display':'none'},
                             ),
 
                             dcc.Download(id="downloadQueryResults"),
+                            dcc.Download(id="downloadCurrentPage"),
                             dbc.Pagination(
                                 id='showPage',
                                 first_last=True,
@@ -749,7 +778,7 @@ def Some_utility():
                                             dcc.Upload(
                                                 html.Div(
                                                     dbc.Button(
-                                                        '🗁', 
+                                                        [html.I(className='fa fa-folder-open text-white')], 
                                                         color="primary",
                                                         id='open_md_file',
                                                         n_clicks=0,
@@ -765,7 +794,7 @@ def Some_utility():
                                             #     spinner_style={'display':'none'}
                                             # ),
                                             dbc.Button(
-                                                        '🗀', 
+                                                        [html.I(className='fa fa-folder text-white')], 
                                                         color="primary",
                                                         id='close_md_file',
                                                         n_clicks=0,
@@ -967,6 +996,35 @@ def SaveQueryResultsToLocalComp(n, p4n, p4l, l1p, d):
             out_md='\n\n'.join(['###### '+str(i+1)+'\n'+l[i] for i in range(len(l))])
         return dict(content=out_number+out_list+out_md, filename="query_results_"+re.sub('[-:. ]','_',str(dtm.now()))+".md")
 
+
+@app.callback(
+    Output('downloadCurrentPage','data'),
+    [Input('saveResultPage','n_clicks')],
+    [
+        State('place4number','children'),
+        State('place4list','children'),
+        State('listForOnePage','children'),
+        State('storeForQueryResults','data'),
+        State('showPage','active_page'),
+        State('queryRusultSize','value'),
+    ]
+)
+def SaveResultPageToLocalComp(n, p4n, p4l, l1p, d, ap, sz):
+    if n:
+        if p4n!='':
+            out_number='#### '+p4n+'\n\n'
+            out_list=''
+        elif p4l!='':
+            out_list='#### '+p4l+'\n\n'
+            out_number=''
+        if l1p==[]:
+            out_md=''
+        else:
+            b=(ap-1)*5
+            e=min(int(sz),ap*5)
+            l=bj.loads(d)[b:e]
+            out_md='\n\n'.join(['###### '+str(b+i+1)+'\n'+l[i] for i in range(len(l))])
+        return dict(content=out_number+out_list+out_md, filename="current_page_"+re.sub('[-:. ]','_',str(dtm.now()))+".md")
 
 
 @app.callback(
@@ -1229,7 +1287,10 @@ def OpenCloseQueryModal(n_Ok,n_Error, v,ap,data_list,q_type,q_size,l_ch,l_st,sp_
                 # VERY IMPORTANT                                      #
                 #######################################################
                 # dcc.Markdown(children='###### '+str((ap-1)*5+i+1)+'\n'+l[i]['content']['markdown'],style=md_style)
-                dcc.Markdown(children='###### '+str((ap-1)*5+i+1)+'\n'+l[i], style=md_style)
+                dcc.Markdown(
+                    children='###### '+str((ap-1)*5+i+1)+'\n'+l[i], 
+                    style=md_style,
+                )
                 for i in range(len(l))
             ]
         )
@@ -1496,6 +1557,17 @@ def Change_Metric_Pattern(pattern, word_section):
         p=re.sub(r'([-⏑])',r'\1[⋮┋|‖⦀]?',p)
     return p
 
+##############################################
+# Important
+##############################################  
+
+def Change_Greek_Pattern(pattern):
+    global Greek_Letters_And_Diacritics
+    p=pattern
+    for x in Greek_Letters_And_Diacritics:
+        p=re.sub(x,Greek_Letters_And_Diacritics[x],p)
+    return p
+
 '''
         preQuery={
             x['id']: {
@@ -1509,20 +1581,29 @@ def Change_Metric_Pattern(pattern, word_section):
         }
 '''
 
+def Change_Various_Pattern(pattern, zone_name, word_section):
+    if zone_name not in ['scheme','verse.rhythm','verse.src']:
+        return pattern
+    elif zone_name in ['scheme','verse.rhythm']:
+        return Change_Metric_Pattern(pattern, word_section)
+    elif zone_name == 'verse.src':
+        return Change_Greek_Pattern(pattern)
+
+
 def Create_Single_Query(pre_query):
-    if pre_query['compare_mode']=='coinside':
-        if pre_query['zone_name'] not in ['scheme','verse.rhythm'] or pre_query['word_section']=='all_pauses':
-            d={pre_query['zone_name']:pre_query['pattern']}
+    zone_name=pre_query['zone_name']
+    word_section=pre_query['word_section']
+    compare_mode=pre_query['compare_mode']
+    pattern=Change_Various_Pattern(pre_query['pattern'], zone_name, word_section)
+    if compare_mode == 'coinside':
+        if zone_name not in ['scheme','verse.rhythm','verse.src']:
+            return {zone_name: pattern}
         else:
-            d={pre_query['zone_name']: {"$regex":'^'+Change_Metric_Pattern(pre_query['pattern'],pre_query['word_section'])+'$',"$options":"i"}}
-    elif pre_query['compare_mode']=='include':
-        if pre_query['zone_name'] not in ['scheme','verse.rhythm']:
-            d={pre_query['zone_name']: {"$regex":pre_query['pattern'],"$options":"i"}}
-        else:
-            d={pre_query['zone_name']: {"$regex":Change_Metric_Pattern(pre_query['pattern'],pre_query['word_section']),"$options":"i"}}
-    elif pre_query['compare_mode']=='text':
-        d={"$text":{"$search": pre_query['pattern']}}
-    return d
+            return {zone_name: {"$regex":'^'+pattern+'$',"$options":"i"}}
+    elif compare_mode == 'include':
+        return {zone_name: {"$regex": pattern,"$options":"i"}}
+    elif compare_mode == 'text':
+        return {"$text":{"$search": pattern}}
 
 
 
