@@ -817,9 +817,9 @@ def Some_utility():
                     ),
                     dbc.AccordionItem(
                         id='edit_json',
-                        title='Просмотр и файла .JSON',
+                        title='Просмотр и редактирование файла .JSON',
                         children=[
-                            Under_construction('Раздел "Просмотр и редактирование файла .JSON"'),
+                            Under_construction('Раздел "Просмотр файла .JSON"'),
                         ],
                     ),
                     dbc.AccordionItem(
