@@ -31,7 +31,7 @@ def loadCSV(c,sep=',',decimal='.'):
 def loadJSON(c):
     s=loadUTF8(c)
     d=j.loads(s)
-    cont=j.dumps(d,indent=4)
+    cont=j.dumps(d,indent=4,ensure_ascii=False)
     return d, cont
 
 

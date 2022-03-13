@@ -30,7 +30,7 @@ def greek_kbd():
             dbc.Button(id="pi",children="π", color="dark", outline=True, size="md", className="me-md-1", style={"fontFamily": "monospace"}),
             dbc.Button(id="backspace",children="⌫", color="dark", outline=True, size="md", className="me-md-1", style={"fontFamily": "monospace"})
             ],
-            className="d-grid d-md-flex justify-content-md-center", style={"paddingTop":"3pt"}),
+            style={"paddingTop":"3pt",'display':'flex', 'flex-direction':'row','justify-content':'center'}),
         html.Div(id='kbSecondLine',children=[
             dbc.Button(id="alpha",children="α", color="dark", outline=True, size="md", className="me-md-1", style={"fontFamily": "monospace"}),
             dbc.Button(id="sigma",children="σ", color="dark", outline=True, size="md", className="me-md-1", style={"fontFamily": "monospace"}),
@@ -41,7 +41,7 @@ def greek_kbd():
             dbc.Button(id="stigma",children="ς", color="dark", outline=True, size="md", className="me-md-1", style={"fontFamily": "monospace"}),
             dbc.Button(id="kappa",children="κ", color="dark", outline=True, size="md", className="me-md-1", style={"fontFamily": "monospace"}),
             dbc.Button(id="lambda",children="λ", color="dark", outline=True, size="md", className="me-md-1", style={"fontFamily": "monospace"})
-        ],className="d-grid d-md-flex justify-content-md-center", style={"paddingTop":"3pt"}),
+        ],style={"paddingTop":"3pt",'display':'flex', 'flex-direction':'row','justify-content':'center'}),
         html.Div(id='kbThirdLine',children=[
             dbc.Button(id="zeta",children="ζ", color="dark", outline=True, size="md", className="me-md-1", style={"fontFamily": "monospace"}),
             dbc.Button(id="chi",children="χ", color="dark", outline=True, size="md", className="me-md-1", style={"fontFamily": "monospace"}),
@@ -49,11 +49,11 @@ def greek_kbd():
             dbc.Button(id="beta",children="β", color="dark", outline=True, size="md", className="me-md-1", style={"fontFamily": "monospace"}),
             dbc.Button(id="nu",children="ν", color="dark", outline=True, size="md", className="me-md-1", style={"fontFamily": "monospace"}),
             dbc.Button(id="mu",children="μ", color="dark", outline=True, size="md", className="me-md-1", style={"fontFamily": "monospace"})
-    ],className="d-grid d-md-flex justify-content-md-center", style={"paddingTop":"3pt"}),
+    ],style={"paddingTop":"3pt",'display':'flex', 'flex-direction':'row','justify-content':'center'}),
         html.Div(id='specsymb',children=[
             dbc.Button(id="space",children=" ", color="dark", outline=True, size="md", className="me-md-1", style={"fontFamily": "monospace","width":"12em"}),
             dbc.Button(id="changecase",children='⇧', color="dark", outline=True, size="md", className="me-md-1", style={"fontFamily": "monospace"})
-        ],className="d-grid d-md-flex justify-content-md-center", style={"paddingTop":"3pt"})
+        ],style={"paddingTop":"3pt",'display':'flex', 'flex-direction':'row','justify-content':'center'})
     ]
 
 def metric_kbd():
@@ -70,7 +70,7 @@ def metric_kbd():
             dbc.Button(id="metrical_two_shorts_over_long",children="⏕", color="dark", outline=True, size="md", className="me-md-1", style={"fontFamily": "monospace"}),
             dbc.Button(id="mbackspace",children="⌫", color="dark", outline=True, size="md", className="me-md-1", style={"fontFamily": "monospace"})
             ],
-            className="d-grid d-md-flex justify-content-md-center", style={"paddingTop":"3pt"}),
+            style={"paddingTop":"3pt",'display':'flex', 'flex-direction':'row','justify-content':'center'}),
         html.Div(id='mkbSecondLine',children=[
             dbc.Button(id="accent",children="´", color="dark", outline=True, size="md", className="me-md-1", style={"fontFamily": "monospace"}),
             dbc.Button(id="sup_1",children="¹", color="dark", outline=True, size="md", className="me-md-1",style={'text-decoration':'underline',"fontFamily": "monospace"}),
@@ -80,16 +80,16 @@ def metric_kbd():
             dbc.Button(id="sup_5",children="⁵", color="dark", outline=True, size="md", className="me-md-1",style={'text-decoration':'underline',"fontFamily": "monospace"}),
             dbc.Button(id="sup_6",children="⁶", color="dark", outline=True, size="md", className="me-md-1",style={'text-decoration':'underline',"fontFamily": "monospace"}),
             dbc.Button(id="tilda",children="~", color="dark", outline=True, size="md", className="me-md-1",style={'text-decoration':'underline',"fontFamily": "monospace"})
-        ],className="d-grid d-md-flex justify-content-md-center", style={"paddingTop":"3pt"}),
+        ],style={"paddingTop":"3pt",'display':'flex', 'flex-direction':'row','justify-content':'center'}),
         html.Div(id='mkbThirdLine',children=[
             dbc.Button(id="bar_1",children="|", color="dark", outline=True, size="md", className="me-md-1", style={"fontFamily": "monospace"}),
             dbc.Button(id="bar_2",children="‖", color="dark", outline=True, size="md", className="me-md-1", style={"fontFamily": "monospace"}),
             dbc.Button(id="bar_3",children="⦀", color="dark", outline=True, size="md", className="me-md-1", style={"fontFamily": "monospace", "width":"2.2em"}),
             dbc.Button(id="dotted_bar",children="⋮", color="dark", outline=True, size="md", className="me-md-1", style={"fontFamily": "monospace", "width":"2.2em"}),
             dbc.Button(id="dashed_bar",children="┋", color="dark", outline=True, size="md", className="me-md-1", style={"fontFamily": "monospace", "width":"2.3em"})
-    ],className="d-grid d-md-flex justify-content-md-center", style={"paddingTop":"3pt"}),
+    ],style={"paddingTop":"3pt",'display':'flex', 'flex-direction':'row','justify-content':'center'}),
         html.Div(id='mspecsymb',children=[
             dbc.Button(id="mspace",children=" ", color="dark", outline=True, size="md", className="me-md-1", style={"fontFamily": "monospace", "width":"12em", "height":"2.25em"})
-        ], className="d-grid d-md-flex justify-content-md-center", style={"paddingTop":"3pt"})
+        ], style={"paddingTop":"3pt",'display':'flex', 'flex-direction':'row','justify-content':'center'})
     ]
 
