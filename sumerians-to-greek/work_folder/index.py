@@ -819,7 +819,46 @@ def Some_utility():
                         id='edit_json',
                         title='Просмотр и редактирование файла .JSON',
                         children=[
-                            Under_construction('Раздел "Просмотр и редактирование файла .JSON"'),
+                            html.Div(
+                                id='edit_json_button_container',
+                                children=[
+                                    dcc.Upload(
+                                        dbc.Button(
+                                            id='open_JSON', 
+                                            children=[html.I(className='fa fa-folder-open text-white')],
+                                            color='primary',
+                                            disabled=False,
+                                            n_clicks=0,
+                                        ), 
+                                        id='my_JSON_file', 
+                                        accept='application/json',
+                                    ),
+                                    dbc.Button(
+                                        id='save_JSON',
+                                        children=[html.I(className='fa fa-save text-white')],
+                                        color='primary',
+                                        disabled=False,
+                                        n_clicks=0,
+                                    ),
+                                ],
+                                style={'display':'flex','flex-direction':'row','justify-content':'space-between'},
+                            ),
+                            dbc.Tooltip('Открыть файл .JSON',target='open_JSON',placement='right'),
+                            dbc.Tooltip('Сохранить файл .JSON',target='save_JSON',placement='left'),
+                            html.Div(
+                                children=[
+                                    dbc.Textarea(
+                                        id='my_JSON_area',
+                                        value='',
+                                        placeholder='JSON...',
+                                        wrap='hard',
+                                        size='md',
+                                        style={'height': '20em', 'margin-top':'1em', 'overflow':'auto'},
+                                    )
+                                ],
+                                style={'display':'flex','justify-content':'center'},
+                            ),
+                            dcc.Download(id='download_JSON'),
                         ],
                     ),
                     dbc.AccordionItem(
@@ -890,6 +929,27 @@ app.layout = html.Div(
 
 def Get_Tr_Element(tr,k):
     return tr['props']['children'][k]['props']['children']
+
+@app.callback(
+    Output('my_JSON_area','value'),
+    [Input('my_JSON_file','contents')])
+def load_JSON_from_file(c):
+    d={}
+    if c is not None and c!='':
+        d, cont = uf.loadJSON(c)
+        return cont
+    else:
+        return ''
+
+@app.callback(
+    Output('download_JSON','data'),
+    [Input('save_JSON','n_clicks')],
+    [State('my_JSON_area','value')],
+)
+def Save_JSON_file_to_local_comp(n,v):
+    if n:
+        return dict(content=v, filename="JSON_file_"+re.sub('[-:. ]','_',str(dtm.now()))+".json")
+
 
 
 @app.callback(
