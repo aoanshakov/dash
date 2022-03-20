@@ -204,9 +204,48 @@ def Search_wizard():
                                                 children=[
                                                     dbc.Button(id='virtualKeyBoardButton',children=[html.I(className='fa fa-keyboard text-white')],color='primary',n_clicks=0,disabled=True,style={'font-family':'monospace','width':'3em'}),
                                                     dbc.Button(id='magicButton',children=[html.I(className='fa fa-magic text-white')],color='primary',n_clicks=0,disabled=True,style={'font-family':'sans-serif','width':'3em'}),
-                                                    dbc.Button(id='allWordSection',children='⋮|',color='info',n_clicks=0,disabled=True,style={'font-family':'Arial, sans-serif','font-weight':'900','width':'3em'}),
-                                                    dbc.Button(id='softWordSectionFree',children='|',color='primary',n_clicks=0,disabled=True,style={'font-family':'Arial, sans-serif', 'font-weight':'900','width':'3em'}),
-                                                    dbc.Button(id='wordSectionFree',children='_',color='primary',n_clicks=0,disabled=True,style={'font-family':'monospase','font-weight':'900','width':'3em'}),
+                                                    dbc.Button(
+                                                        id='allWordSection',
+                                                        children='',
+                                                        color='info',
+                                                        n_clicks=0,
+                                                        disabled=True,
+                                                        style={
+                                                            'background-image':'url("assets/all_breaks_test.svg")',
+                                                            'background-repeat':'no-repeat', 
+                                                            'background-position':'center',
+                                                            'background-size':'22%',
+                                                            'width':'3em'
+                                                        },
+                                                    ),
+                                                    dbc.Button(
+                                                        id='softWordSectionFree',
+                                                        children='',
+                                                        color='primary',
+                                                        n_clicks=0,
+                                                        disabled=True,
+                                                        style={
+                                                            'background-image':'url("assets/strong_breaks_test.svg")',
+                                                            'background-repeat':'no-repeat', 
+                                                            'background-position':'center',
+                                                            'background-size':'8%',
+                                                            'width':'3em'
+                                                        },
+                                                    ),
+                                                    dbc.Button(
+                                                        id='wordSectionFree',
+                                                        children='',
+                                                        color='primary',
+                                                        n_clicks=0,
+                                                        disabled=True,
+                                                        style={
+                                                            'background-image':'url("assets/no_breaks_test.svg")',
+                                                            'background-repeat':'no-repeat', 
+                                                            'background-position':'center 80%',
+                                                            'background-size':'55%',
+                                                            'width':'3em'
+                                                        },
+                                                    ),
                                                     dbc.Button(id='helpButton', children=[html.I(className='fa fa-question text-white')],color='primary', disabled=False,n_clicks=0,style={'font-family':'serif','width':'3em'}),
                                                 ],
                                             ),
@@ -235,12 +274,17 @@ def Search_wizard():
                                                     ),
                                                     dbc.Button(
                                                         id='textSearch',
-                                                        children=[html.I(className='fa fa-file-alt text-white')],
-                                                        # children='T',
+                                                        children='',
                                                         color='primary',
                                                         n_clicks=0,
                                                         disabled=True,
-                                                        style={'font-family':'Courier, monospace','font-weyght':'900','width':'3em'}
+                                                        style={
+                                                            'background-image':'url("assets/text_test.svg")',
+                                                            'background-repeat':'no-repeat', 
+                                                            'background-position':'center',
+                                                            'background-size':'70%',
+                                                            'width':'3em',
+                                                        },
                                                     ),
                                                     dbc.Button(id='addCondition',children=[html.I(className='fa fa-edit text-white')],color='primary',n_clicks=0, disabled=True,style={'font-family':'monospace','width':'3em'}),
                                                     dbc.Button(id='execQuery', children=[html.I(className='fa fa-search text-white')],color='primary', disabled=True,n_clicks=0,style={'font-family':'monospace','width':'3em'}),
@@ -822,16 +866,33 @@ def Some_utility():
                             html.Div(
                                 id='edit_json_button_container',
                                 children=[
-                                    dcc.Upload(
-                                        dbc.Button(
-                                            id='open_JSON', 
-                                            children=[html.I(className='fa fa-folder-open text-white')],
-                                            color='primary',
-                                            disabled=False,
-                                            n_clicks=0,
-                                        ), 
-                                        id='my_JSON_file', 
-                                        accept='application/json',
+                                    html.Div(
+                                        children=[
+                                            dcc.Upload(
+                                                dbc.Button(
+                                                    id='open_JSON', 
+                                                    children=[html.I(className='fa fa-folder-open text-white')],
+                                                    color='primary',
+                                                    disabled=False,
+                                                    n_clicks=0,
+                                                ), 
+                                                id='my_JSON_file', 
+                                                accept='application/json',
+                                            ),
+                                            dbc.Button(
+                                                id='close_JSON',
+                                                children=[html.I(className='fa fa-folder text-white')],
+                                                color='primary',
+                                                disabled=False,
+                                                n_clicks=0,
+                                                style={'margin-left':'4px'},
+                                            ),
+                                        ],
+                                        style={
+                                            'display':'flex',
+                                            'flex-direction':'row',
+                                            'justify-content':'flex-start',
+                                        },
                                     ),
                                     dbc.Button(
                                         id='save_JSON',
@@ -843,7 +904,8 @@ def Some_utility():
                                 ],
                                 style={'display':'flex','flex-direction':'row','justify-content':'space-between'},
                             ),
-                            dbc.Tooltip('Открыть файл .JSON',target='open_JSON',placement='right'),
+                            dbc.Tooltip('Открыть файл .JSON',target='open_JSON',placement='bottom'),
+                            dbc.Tooltip('Закрыть файл .JSON',target='close_JSON',placement='bottom'),
                             dbc.Tooltip('Сохранить файл .JSON',target='save_JSON',placement='left'),
                             html.Div(
                                 children=[
@@ -930,28 +992,7 @@ app.layout = html.Div(
 def Get_Tr_Element(tr,k):
     return tr['props']['children'][k]['props']['children']
 
-@app.callback(
-    Output('my_JSON_area','value'),
-    [Input('my_JSON_file','contents')])
-def load_JSON_from_file(c):
-    d={}
-    if c is not None and c!='':
-        d, cont = uf.loadJSON(c)
-        return cont
-    else:
-        return ''
-
-@app.callback(
-    Output('download_JSON','data'),
-    [Input('save_JSON','n_clicks')],
-    [State('my_JSON_area','value')],
-)
-def Save_JSON_file_to_local_comp(n,v):
-    if n:
-        return dict(content=v, filename="JSON_file_"+re.sub('[-:. ]','_',str(dtm.now()))+".json")
-
-
-
+'''
 @app.callback(
     Output('md_file_for_browsing','children'),
     [
@@ -975,6 +1016,82 @@ def render_md_content(n_open, n_close, c, ch):
         return ''
     else:
         return ch
+'''
+@app.callback(
+    Output('my_JSON_area','value'),
+    [
+        Input('open_JSON','n_clicks'),
+        Input('close_JSON','n_clicks'),
+        Input('my_JSON_file','contents'),
+    ],
+    [
+        State('my_JSON_area','value'),
+    ],
+)
+def render_JSON_content(n_open, n_close, c, ch):
+    d={}
+    dcct=dash.callback_context.triggered
+    if dcct is None:
+        keyid=''
+    else:
+        keyid=dcct[0]['prop_id'].split('.')[0]
+    if keyid=='my_JSON_file':
+        d,  cont = uf.loadJSON(c)
+        return cont
+    elif keyid=='close_JSON':
+        return ''
+    else:
+        return ch
+
+'''
+def load_JSON_from_file(c):
+    d={}
+    if c is not None and c!='':
+        d, cont = uf.loadJSON(c)
+        return cont
+    else:
+        return ''
+'''
+
+@app.callback(
+    Output('download_JSON','data'),
+    [Input('save_JSON','n_clicks')],
+    [State('my_JSON_area','value')],
+)
+def Save_JSON_file_to_local_comp(n,v):
+    if n:
+        return dict(content=v, filename="JSON_file_"+re.sub('[-:. ]','_',str(dtm.now()))+".json")
+
+
+
+@app.callback(
+    Output('md_file_for_browsing','children'),
+    [
+        Input('open_md_file','n_clicks'),
+        Input('close_md_file','n_clicks'),
+        Input('my_md_file','contents'),
+        Input('my_md_file','filename'),
+    ],
+    [
+        State('md_file_for_browsing','children'),
+    ],
+)
+def render_md_content(n_open, n_close, c, fn, ch):
+    dcct=dash.callback_context.triggered
+    if dcct is None:
+        keyid=''
+    else:
+        keyid=dcct[0]['prop_id'].split('.')[0]
+    if keyid=='my_md_file':
+            cont = uf.loadUTF8(c)
+            if fn[-3:].lower()=='.md':
+                return cont
+            else:
+                return fn+': It is not a markdown file!'
+    elif keyid=='close_md_file':
+        return ''
+    # else:
+    #     return ch
 
 # @app.callback(
 #     [
